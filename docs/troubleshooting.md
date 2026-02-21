@@ -1,22 +1,46 @@
 # Troubleshooting
 
-## Vanadium stays inactive
+## Vanadium does not initialize
 
-Cause: VulkanMod not installed.
+Cause:
 
-Action: install VulkanMod; Vanadium intentionally remains dormant otherwise.
+- VulkanMod not installed or not loading
 
-## Pack rejected
+Fix:
+
+- Install VulkanMod and verify Fabric loads it.
+
+## No packs are listed
 
 Check:
 
-- file extension is `.mcshader`
-- `metadata.json` has required fields
+- pack extension is `.mcshader`
+- pack is placed in `<gameDir>/shaderpacks/`
+- `metadata.json` exists and is valid
+
+## Pack is rejected
+
+Check:
+
+- required metadata fields are present
 - `modules.compute` exists
-- SPIR-V binaries include expected entry points
+- module paths point to valid SPIR-V binaries
+- entrypoint names match actual SPIR-V entrypoints
 
-## Fallback renderer remains active
+## UI entry missing in Video Settings
 
-Cause: graphics or compute pipeline validation failed.
+Check:
 
-Action: run `/vanadium status` and inspect log output for structured rejection reason.
+- client entrypoint `net.vanadium.VanadiumClient` is present in `fabric.mod.json`
+- client classes are under `src/client/java`
+- build includes `src/client/resources/vanadium.client.mixins.json`
+
+## Build fails with Gradle lock/permission errors
+
+Cause:
+
+- wrapper cache lock in `~/.gradle` not writable in sandbox
+
+Fix:
+
+- rerun build with proper permissions for Gradle cache access.

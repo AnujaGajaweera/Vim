@@ -1,18 +1,20 @@
 # Descriptor Layout Specification
 
-`descriptorLayout` is an array of binding declarations.
+`descriptorLayout` is optional. If present, it must be an array of entries.
 
-Each entry:
+## Entry Fields
 
-- `set`: integer >= 0
-- `binding`: integer >= 0
+- `set`: integer, `>= 0`
+- `binding`: integer, `>= 0`
 - `type`: string
 - `name`: string
 
-## Validation behavior
+## Validation Rules
 
-- negative set/binding values are rejected
-- if entries are declared, each `set/binding` pair must be reflected in SPIR-V decorations
-- SPIR-V reflection uses `OpDecorate` with `DescriptorSet` and `Binding`
+- Negative values are rejected.
+- Declared `set/binding` pairs must appear in SPIR-V decorations when layout is provided.
+- Reflection is based on SPIR-V `OpDecorate` values for `DescriptorSet` and `Binding`.
 
-Key encoding used internally: `set * 1000 + binding`.
+Internal key derivation used during validation:
+
+- `key = set * 1000 + binding`

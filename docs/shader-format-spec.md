@@ -2,33 +2,37 @@
 
 ## Container
 
-- File extension: `.mcshader`
-- Container format: ZIP archive
-- Scan path: `<gameDir>/shaderpacks/`
-- `.zip` files are ignored by design.
+- Extension: `.mcshader`
+- Physical format: ZIP archive
+- Scan directory: `<gameDir>/shaderpacks/`
+- `.zip` shader packs are ignored
 
-## Required Files
+## Required File
 
 - `metadata.json`
 
-## SPIR-V Modules
+## Shader Modules
 
-Modules are declared in `metadata.json` under `modules`.
-Each module path must reference a binary SPIR-V file in the archive.
+Declared under `metadata.modules`.
 
-Supported stages:
+Supported keys:
 
 - `vertex`
 - `fragment`
-- `compute` (mandatory)
+- `compute` (required)
 - `geometry` (optional)
+
+Each module:
+
+- `path` (required)
+- `entryPoint` (optional, defaults to `main`)
 
 ## Validation
 
-- SPIR-V magic number verification
-- instruction stream shape validation
-- entry-point name validation
-- execution model vs stage validation
-- descriptor decoration reflection for layout checks
+Vanadium rejects invalid packs safely (without client crash) when any of the following fail:
 
-Invalid packs are rejected without crashing the client.
+- SPIR-V magic number and binary length checks
+- instruction stream shape checks
+- expected entrypoint presence
+- execution model/stage match
+- descriptor decoration checks (`DescriptorSet`, `Binding`) when descriptor layout is declared

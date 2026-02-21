@@ -1,8 +1,8 @@
 # Metadata Specification
 
-`metadata.json` is mandatory.
+`metadata.json` is mandatory for every `.mcshader` archive.
 
-## Required top-level fields
+## Required Fields
 
 - `name`: string
 - `author`: string
@@ -11,29 +11,29 @@
 - `supportedMinecraftVersion`: string
 - `modules`: object
 
-## Optional top-level fields
+## Optional Fields
 
-- `icon`: string
+- `icon`: string (path inside archive)
 - `descriptorLayout`: array
 - `renderPass`: object
 
-## modules object
+## modules
 
-Accepted keys:
+Allowed module keys:
 
 - `vertex`
 - `fragment`
 - `compute` (required)
 - `geometry`
 
-Each module definition:
+Each module object:
 
-- `path`: string (required)
-- `entryPoint`: string (optional, defaults to `main`)
+- `path`: string, required
+- `entryPoint`: string, optional (`main` default)
 
-## renderPass object
+## renderPass
 
-- `colorAttachments`: integer, range `[1,8]`
+- `colorAttachments`: integer in `[1, 8]`
 - `depthAttachment`: boolean
 
-Missing required fields cause hard validation failure for that pack only.
+Missing required fields or invalid types cause pack rejection with logged diagnostics.

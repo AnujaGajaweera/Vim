@@ -26,6 +26,17 @@ dependencies {
     modCompileOnly "maven.modrinth:vulkanmod:${project.vulkanmod_version}"
 }
 
+loom {
+    splitEnvironmentSourceSets()
+
+    mods {
+        vanadium {
+            sourceSet sourceSets.main
+            sourceSet sourceSets.client
+        }
+    }
+}
+
 java {
     withSourcesJar()
     sourceCompatibility = JavaVersion.VERSION_21
