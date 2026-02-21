@@ -11,11 +11,6 @@ public final class CompatibilityGuard {
 
     public CompatibilityStatus inspect() {
         boolean vulkanModLoaded = loader.isModLoaded("vulkanmod");
-        boolean irisLoaded = loader.isModLoaded("iris");
-        boolean sodiumLoaded = loader.isModLoaded("sodium");
-        boolean lithiumLoaded = loader.isModLoaded("lithium");
-        boolean phosphorLoaded = loader.isModLoaded("phosphor");
-
-        return new CompatibilityStatus(vulkanModLoaded, irisLoaded, sodiumLoaded, lithiumLoaded, phosphorLoaded);
+        return new CompatibilityStatus(vulkanModLoaded);
     }
 }

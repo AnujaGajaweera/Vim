@@ -13,11 +13,14 @@ import org.slf4j.Logger;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 public final class ShaderManager {
     private final Logger logger;
@@ -31,9 +34,11 @@ public final class ShaderManager {
 
     private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
     private final Map<String, LoadedShaderPack> loadedPacks = new ConcurrentHashMap<>();
+    private final Map<String, String> packErrors = new ConcurrentHashMap<>();
 
     private volatile String activePackId;
     private volatile PipelineHandle graphicsPipeline;
+    private volatile String lastActionError;
 
     public ShaderManager(
             Logger logger,
@@ -60,6 +65,7 @@ public final class ShaderManager {
         try {
             List<PackLoadResult> results = packLoader.scan(shaderpacksDir);
             loadedPacks.clear();
+            packErrors.clear();
             for (PackLoadResult result : results) {
                 if (result.success()) {
                     LoadedShaderPack pack = result.pack();
@@ -67,9 +73,11 @@ public final class ShaderManager {
                     if (validation.valid()) {
                         loadedPacks.put(pack.id(), pack);
                     } else {
+                        packErrors.put(pack.id(), validation.reason());
                         StructuredLog.warn(logger, "descriptor-validation-failed", StructuredLog.kv("pack", pack.id(), "reason", validation.reason()));
                     }
                 } else {
+                    packErrors.put(result.id(), result.message());
                     StructuredLog.warn(logger, "pack-invalid", StructuredLog.kv("pack", result.id(), "reason", result.message()));
                 }
             }
@@ -101,17 +109,20 @@ public final class ShaderManager {
         try {
             LoadedShaderPack pack = loadedPacks.get(id);
             if (pack == null) {
+                lastActionError = "Pack not found: " + id;
                 return false;
             }
 
             PipelineBuilder.BuildResult graphics = pipelineBuilder.buildGraphics(pack);
             if (!graphics.success()) {
+                lastActionError = graphics.reason();
                 StructuredLog.warn(logger, "graphics-build-failed", StructuredLog.kv("pack", id, "reason", graphics.reason()));
                 fallbackRenderer.enable();
                 return false;
             }
 
             if (!computeManager.activate(pack)) {
+                lastActionError = "Compute pipeline activation failed";
                 fallbackRenderer.enable();
                 return false;
             }
@@ -122,6 +133,7 @@ public final class ShaderManager {
 
             graphicsPipeline = graphics.pipelineHandle();
             activePackId = id;
+            lastActionError = null;
             fallbackRenderer.disable();
             StructuredLog.info(logger, "pack-activated", StructuredLog.kv("pack", id, "pipeline", graphicsPipeline.id()));
             return true;
@@ -139,6 +151,7 @@ public final class ShaderManager {
             }
             computeManager.shutdown();
             activePackId = null;
+            lastActionError = null;
             fallbackRenderer.enable();
             StructuredLog.info(logger, "pack-deactivated", StructuredLog.kv("active", false));
         } finally {
@@ -161,5 +174,45 @@ public final class ShaderManager {
 
     public boolean isFallbackActive() {
         return fallbackRenderer.isActive();
+    }
+
+    public Map<String, String> packErrors() {
+        lock.readLock().lock();
+        try {
+            return new LinkedHashMap<>(packErrors);
+        } finally {
+            lock.readLock().unlock();
+        }
+    }
+
+    public Optional<String> lastActionError() {
+        return Optional.ofNullable(lastActionError);
+    }
+
+    public Optional<byte[]> loadIconBytes(String packId) {
+        lock.readLock().lock();
+        try {
+            LoadedShaderPack pack = loadedPacks.get(packId);
+            if (pack == null) {
+                return Optional.empty();
+            }
+
+            String iconPath = pack.metadata().icon();
+            if (iconPath == null || iconPath.isBlank() || iconPath.contains("..") || iconPath.startsWith("/")) {
+                return Optional.empty();
+            }
+
+            try (ZipFile zipFile = new ZipFile(pack.archivePath().toFile())) {
+                ZipEntry iconEntry = zipFile.getEntry(iconPath);
+                if (iconEntry == null || iconEntry.isDirectory()) {
+                    return Optional.empty();
+                }
+                return Optional.of(zipFile.getInputStream(iconEntry).readAllBytes());
+            } catch (Exception ignored) {
+                return Optional.empty();
+            }
+        } finally {
+            lock.readLock().unlock();
+        }
     }
 }

@@ -42,11 +42,7 @@ public final class mod implements ModInitializer {
 
         CompatibilityStatus status = new CompatibilityGuard(FabricLoader.getInstance()).inspect();
         StructuredLog.info(LOGGER, "compatibility-status", StructuredLog.kv(
-                "vulkanmod", status.vulkanModLoaded(),
-                "iris", status.irisLoaded(),
-                "sodium", status.sodiumLoaded(),
-                "lithium", status.lithiumLoaded(),
-                "phosphor", status.phosphorLoaded()
+                "vulkanmod", status.vulkanModLoaded()
         ));
 
         if (!status.canBootVanadium()) {
@@ -95,8 +91,7 @@ public final class mod implements ModInitializer {
         ClientLifecycleEvents.CLIENT_STOPPING.register(client -> shutdown());
 
         StructuredLog.info(LOGGER, "vanadium-started", StructuredLog.kv(
-                "shaderpacksDir", shaderpacksDir,
-                "irisIsolation", status.irisLoaded()
+                "shaderpacksDir", shaderpacksDir
         ));
     }
 

@@ -1,82 +1,140 @@
-# Vanadium
+# Vanadium Mod
 
-Vanadium is a Fabric client mod that loads **precompiled SPIR-V-only** shader packs for a Vulkan renderer in Minecraft.
-It is designed for VulkanMod environments and remains dormant if VulkanMod is unavailable.
+**Vanadium Mod** is a **Vulkan-native shader pack loader** for Minecraft Java Edition, designed to provide a modern, stable, and production-ready SPIR-V shader pipeline. It is fully compatible with **Fabric** (Quilt-friendly) and integrates seamlessly with **VulkanMod**.
 
-## License
+Vanadium allows developers and players to run **precompiled SPIR-V shaders** without interfering with existing GLSL shader ecosystems (including Iris `.zip` shaders).
 
-Vanadium is released under **GNU Lesser General Public License v3.0 (LGPL-3.0-only)**.
-
-- Full license text: `LICENSE`
-- Declared in `fabric.mod.json`
-- Declared in `gradle.properties`
+---
 
 ## Features
 
-- Strict `.mcshader` shader pack format (ZIP archive)
-- Defensive archive validation and metadata validation
-- SPIR-V module verification (magic, instruction stream, entry point, stage)
-- Graphics + compute pipeline activation model
-- Hot reload via filesystem watch + `/vanadium reload`
-- Safe fallback renderer state when no valid pack is active
-- Compatibility guard for VulkanMod/Iris/Sodium/Lithium/Phosphor coexistence
+**🔹 Vulkan SPIR-V Shader Pipeline**
+Load and bind vertex, fragment, and compute shaders in Minecraft via Vulkan.
 
-## Hard Isolation Rules
+**🔹 Hot-Reloading**
+Change shader packs without restarting Minecraft. Live updates with automatic rollback on errors.
 
-Vanadium intentionally does **not**:
+**🔹 Shader Configuration UI**
 
-- parse Iris shader formats
-- load `.zip` shaderpacks
-- scan GLSL shader directories
-- register OpenGL shader providers
-- modify Iris config/state
+* Menu: `Options → Video Settings → Vanadium Shaders`
+* View shader metadata: Name, Author, Description, Version, Supported Minecraft version
+* Icon preview for each shader pack
+* Enable/Disable packs and reload shaders live
 
-Vanadium scans only: `<gameDir>/shaderpacks/*.mcshader`
+**🔹 Compute Shader Support**
+Execute GPU compute shaders safely where supported.
 
-## Build
+**🔹 Safe Fallback**
+Automatic fallback to the default Vulkan renderer if shaders fail to load.
 
-```bash
-./gradlew build
+**🔹 Iris-Safe Operation**
+
+* `.mcshader` packs are fully isolated
+* Does not parse or modify `.zip` shaderpacks
+* No conflicts with Iris or other GLSL shader loaders
+
+**🔹 Developer-Friendly Logging**
+
+* Shader compilation and pipeline errors logged
+* Hot-reload diagnostics
+
+---
+
+## Shader Pack Format (`.mcshader`)
+
+Vanadium uses **precompiled SPIR-V shaders** packaged in `.mcshader` ZIP archives.
+
+**Required Files:**
+
+**Metadata JSON (`vanadium.json`)**
+
+```json
+{
+  "name": "Example Shader",
+  "author": "AuthorName",
+  "description": "A simple SPIR-V shader pack.",
+  "icon": "icon.png",
+  "version": "1.0.0",
+  "minecraft_version": "1.19+"
+}
 ```
 
-## Run (dev client)
+**Shader Modules**
 
-```bash
-./gradlew runClient
+* Vertex shader: `shader.vert.spv`
+* Fragment shader: `shader.frag.spv`
+* Optional compute shader: `shader.comp.spv`
+* Optional geometry shader: `shader.geom.spv`
+
+> Vanadium **ignores `.zip` shaderpacks** to avoid conflicts with Iris.
+
+---
+
+## Installation
+
+1. Install Minecraft Java Edition.
+2. Install Fabric (Quilt optional).
+3. Install VulkanMod.
+4. Place `Vanadium Mod.jar` in your `mods/` folder.
+5. Place your `.mcshader` shader packs into the `/shaderpacks/` folder.
+6. Launch Minecraft.
+7. Navigate to:
+
+```
+Options → Video Settings → Vanadium Shaders
 ```
 
-## Install
+---
 
-1. Build JAR from `build/libs`.
-2. Place JAR in Minecraft `mods` folder for Fabric.
-3. Ensure VulkanMod is present.
-4. Copy `example-pack/VanadiumDemo.mcshader` into `<gameDir>/shaderpacks/`.
-5. In-game client command usage:
+## Usage
 
-```text
-/vanadium list
-/vanadium activate vanadiumdemo
-/vanadium status
-/vanadium reload
+* Select an active shader pack from the UI.
+* Click **Reload** to hot-reload changes.
+* Toggle compute shaders if supported by GPU.
+* Use the logs for debugging shader compilation issues.
+
+---
+
+## Example Shader Pack Structure
+
+```
+myshader.mcshader/
+├── vanadium.json
+├── shader.vert.spv
+├── shader.frag.spv
+├── shader.comp.spv  (optional)
+├── icon.png         (optional)
 ```
 
-## Project Layout
+---
 
-- Entrypoint: `net.vanadium.mod`
-- Mod resources: `src/main/resources/fabric.mod.json`
-- Shader subsystem: `src/main/java/net/vanadium/shader`
-- Vulkan backend abstraction: `src/main/java/net/vanadium/vulkan`
-- Hot reload services: `src/main/java/net/vanadium/hotreload`
-- Docs: `docs/`
+## Mod Compatibility
 
-## Documentation Index
+* Compatible with Fabric, Quilt (if supported)
+* Renderer: VulkanMod required
+* Safe to use alongside Iris, Sodium, Lithium, and Phosphor
+* Does **not** interfere with `.zip` shaderpacks
 
-- `docs/shader-format-spec.md`
-- `docs/metadata-spec.md`
-- `docs/descriptor-layout-spec.md`
-- `docs/developer-integration-guide.md`
-- `docs/installation.md`
-- `docs/troubleshooting.md`
-- `docs/conflict-avoidance.md`
-- `docs/iris-coexistence.md`
-- `docs/license-compliance.md`
+---
+
+## Contributing
+
+Vanadium is **open-source**. Contributions are welcome!
+
+* Follow the existing modular architecture.
+* Keep Vulkan resource handling correct.
+* Ensure `.mcshader` packs remain Iris-safe.
+* Use the provided Gradle setup for building and testing.
+
+---
+
+## License
+
+Vanadium Mod is licensed under **LGPL 3.0**.
+
+---
+
+## Contact
+
+For support or questions, open an issue in the GitHub repository:
+[https://github.com/AnujaGajaweera/Vanadium](https://github.com/AnujaGajaweera/Vanadium)
