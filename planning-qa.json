@@ -1,0 +1,107 @@
+{
+    "rounds": [
+        {
+            "questions": [
+                {
+                    "text": "How should shaders be applied in the menu?",
+                    "type": "select",
+                    "options": [
+                        "Apply instantly",
+                        "Use a 'Confirm' button"
+                    ]
+                },
+                {
+                    "text": "What should happen if a shader fails to load?",
+                    "type": "select",
+                    "options": [
+                        "Switch to 'No Shaders'",
+                        "Show error and keep current"
+                    ]
+                },
+                {
+                    "text": "Would you like a quick-reload keyboard shortcut?",
+                    "type": "select",
+                    "options": [
+                        "Yes, add a shortcut",
+                        "No, menu button is enough"
+                    ]
+                },
+                {
+                    "text": "Should the mod show a notification when a shader reloads?",
+                    "type": "select",
+                    "options": [
+                        "Show a message",
+                        "Stay quiet"
+                    ]
+                },
+                {
+                    "text": "Would you like a button to open your shaders folder?",
+                    "type": "select",
+                    "options": [
+                        "Yes, add a folder button",
+                        "No, I'll find it myself"
+                    ]
+                },
+                {
+                    "text": "How should the mod handle unsupported shader features?",
+                    "type": "select",
+                    "options": [
+                        "Try to run a simpler version",
+                        "Disable the shader and warn me"
+                    ]
+                }
+            ],
+            "answers": [
+                "Use a 'Confirm' button",
+                "Show error and keep current",
+                "Yes, add a shortcut",
+                "Show a message",
+                "Yes, add a folder button",
+                "Disable the shader and warn me"
+            ]
+        },
+        {
+            "questions": [
+                {
+                    "text": "Where should the 'Shader reloaded' notification appear?",
+                    "type": "select",
+                    "options": [
+                        "Top-right pop-up (Toast)",
+                        "Chat message",
+                        "Text above the hotbar"
+                    ]
+                },
+                {
+                    "text": "Should shader packs have their own settings menus?",
+                    "type": "select",
+                    "options": [
+                        "Yes, allow packs to have custom settings",
+                        "No, just simple on/off toggles"
+                    ]
+                },
+                {
+                    "text": "Would you like a search box in the shader list?",
+                    "type": "select",
+                    "options": [
+                        "Yes, add a search bar",
+                        "No, a simple list is enough"
+                    ]
+                },
+                {
+                    "text": "How detailed should the error screen be when a shader fails?",
+                    "type": "select",
+                    "options": [
+                        "Simple 'Failed' message",
+                        "Detailed report with technical reasons"
+                    ]
+                }
+            ],
+            "answers": [
+                "Top-right pop-up (Toast)",
+                "Yes, allow packs to have custom settings",
+                "Yes, add a search bar",
+                "Detailed report with technical reasons"
+            ]
+        }
+    ]
+}
