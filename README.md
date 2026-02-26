@@ -328,7 +328,7 @@ Planned directions include:
 
 ## License
 
-Licensed under **LGPL-3.0-only**.
+Licensed under **GPL-3.0-only**.
 
 See:
 

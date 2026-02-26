@@ -81,8 +81,8 @@ publishing {
                 description = 'Vulkan-native SPIR-V shader loader for Minecraft with strict VulkanMod isolation.'
                 licenses {
                     license {
-                        name = 'GNU Lesser General Public License v3.0'
-                        url = 'https://www.gnu.org/licenses/lgpl-3.0.txt'
+                        name = 'GNU General Public License v3.0'
+                        url = 'https://www.gnu.org/licenses/gpl-3.0.txt'
                     }
                 }
             }
